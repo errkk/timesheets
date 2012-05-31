@@ -23,7 +23,7 @@ def dump(request):
 
 		xml = base64.urlsafe_b64decode( b64 )
 	
-		tasks = process_xml.get_tasks( xml, weeks = 2 )
+		tasks = process_xml.get_tasks( xml, weeks = 1 )
 
 		data = map( lambda i: {'name':i['name'],'total':str(i['total'])}, tasks )
 	
