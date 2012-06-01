@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 from interval.fields import IntervalField
-
+from helpers import sum_tds
 
 
 class Task(models.Model):
@@ -15,6 +15,22 @@ class Task(models.Model):
 	def __unicode__(self):
 		return self.name
 
+	def get_aliases(self):
+		'Get all aliases for this task'
+		return TaskAlias.objects.filter( task = self )
+
+	def get_all_intervals(self):
+		aliases = self.get_aliases()
+		if aliases:
+			for a in aliases:
+				print a.get_intervals()
+
+	def get_total_time(self):
+		'''
+		Sum the total timedelta attached to all aliases of this task
+		'''
+		timedeltas = [ a.get_total_time() for a in self.get_aliases() ]
+		return sum_tds( timedeltas )
 
 
 
@@ -31,6 +47,17 @@ class TaskAlias(models.Model):
 		else:
 			name = 'Not Assigned!'
 		return '%s (%s)' % ( self.string, name )
+
+	def get_intervals(self):
+		return Interval.objects.filter( alias = self )
+
+	def get_total_time(self):
+		intervals = self.get_intervals()
+		timedeltas = [ i.duration for i in intervals ]
+
+		total = sum_tds( timedeltas )
+
+		return total
 
 
 class ImportEvent(models.Model):

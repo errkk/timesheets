@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+  {% if tasks %}
+    {% for t in tasks %}
+      <p><strong><span class="label label-info">{{ t }}</span></strong> {{ t.get_total_time }}</p>
+    {% endfor %}
+  {% endif %}
+
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

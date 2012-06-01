@@ -21,8 +21,6 @@ def home(request):
 	# Get all the tasks that this person has done
 	aliases = TaskAlias.objects.filter( interval__importevent__user = request.user ).distinct()
 
-	
-
 	return render( request,'index.html', { 'mytasks' : aliases, 'imports' : imports } )
 
 @login_required
@@ -200,4 +198,14 @@ def delete_task(request,id):
 		request.notifications.success( 'Task Deleted' )
 	
 	return HttpResponseRedirect( reverse('list_tasks') )
+
+
+@login_required
+def all_tasks(request):
+	tasks = Task.objects.all()
+
+
+
+
+	return render(request,'graph.html', { 'title' : 'Edit Tasks', 'tasks' : tasks })
 

@@ -27,15 +27,38 @@
       {% endif %}
     </ul>
   </div><!--/.well -->
+
+
+
+
 {% endblock %}
 
 {% block spotlights %}
 <div class="span4">
   <h2>Recent Imports</h2>
   {% if imports %}
+    <ul>
     {% for i in imports %}
       <li>{{ i.date }}</li>
     {% endfor %}
+  </ul>
   {% endif %}
+</div>
+<div class="span6">
+  <h2>Recent Projects</h2>
+    <ul>
+    {% for t in mytasks %}
+    <li>
+      <strong>
+        {% if t.task %}
+          <span class="label label-info">{{ t.task }}</span>
+        {% else %}
+          <span class="label label-warning">{{ t.string }}</span>
+        {% endif %}  
+      </strong> 
+      {{ t.get_total_time }}
+      
+    {% endfor %}
+    </ul>
 </div>
 {% endblock %}
