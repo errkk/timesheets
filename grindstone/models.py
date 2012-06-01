@@ -34,6 +34,7 @@ class Task(models.Model):
 
 
 
+
 class TaskAlias(models.Model):
 	'''
 	Alternative wordings for a task as described by users in Grindstone

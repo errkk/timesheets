@@ -204,8 +204,13 @@ def delete_task(request,id):
 def all_tasks(request):
 	tasks = Task.objects.all()
 
+	categories = simplejson.dumps( [ t.name for t in tasks ] )
+	values = simplejson.dumps( [ float(t.get_total_time().seconds / 60 ) for t in tasks ] )
 
-
-
-	return render(request,'graph.html', { 'title' : 'Edit Tasks', 'tasks' : tasks })
+	return render(request,'graph.html', { 
+		'title' : 'Edit Tasks', 
+		'tasks' : tasks,
+		'categories' : categories,
+		'values' : values
+		})
 

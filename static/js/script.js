@@ -8,6 +8,9 @@
 	$target	= $(dropbox),
 	url_dump = '/gs/dump';
 
+	if( !dropbox ){
+		return false;
+	}
 
 
 	// init event handlers

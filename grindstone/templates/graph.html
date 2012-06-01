@@ -2,13 +2,40 @@
 
 
 {% block content %}
+<div class="chart" id="chart-canvas"></div>
+{% endblock %}
+
+{% block sidebar %}
   {% if tasks %}
     {% for t in tasks %}
       <p><strong><span class="label label-info">{{ t }}</span></strong> {{ t.get_total_time }}</p>
     {% endfor %}
   {% endif %}
-
 {% endblock %}
 
-{% block sidebar %}
+{% block chartcode %}
+  var chart1; // globally available
+  $(document).ready(function() {
+        chart1 = new Highcharts.Chart({
+           chart: {
+              renderTo: 'chart-canvas',
+              type: 'bar'
+           },
+           title: {
+              text: 'What we been doing?'
+           },
+           xAxis: {
+              categories: {{ categories|safe }}
+           },
+           yAxis: {
+              title: {
+                 text: 'Minutes'
+              }
+           },
+           series: [{
+              name: 'Jane',
+              data: {{ values|safe }}
+           }]
+        });
+     });
 {% endblock %}
