@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>{{ title }}</h1>
+	
+  <div class="row-fluid">
+  	{% block description %}{% endblock %}
+    <div class="form-container">
+        <form action="" method="POST" class="form-vertical">
+		    {% block form %}
+		        {% csrf_token %}
+
+		        {% for field in form %}
+		            <div class="control-group {% if field.errors %} error {% endif %}">
+		                
+		                {{ field.label_tag }} {{ field }}
+		                <span class="help-inline">{{ field.errors }}</span>
+		            </div>
+		        {% endfor %}
+
+		        <div class="form-actions">
+		            {% block actions %}
+		            <button type="submit" class="btn btn-primary">Save</button>
+		            <a href="{{ success_url }}" class="btn">Cancel</a>
+		            {% endblock %}
+		        </div>
+		    {% endblock %}
+		</form>
+      </div>
+  </div><!--/row-->
+
+{% endblock %}

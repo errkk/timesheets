@@ -106,14 +106,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django_notify.middleware.NotificationsMiddleware',
+    'django_notify.middleware.NotificationsMiddleware',
 )
 
-# TEMPLATE_CONTEXT_PROCESSORS += (
-#     'django_notify.context_processors.notifications',
-#     'django.core.context_processors.auth',
-# )
-# NOTIFICATIONS_STORAGE = 'session.SessionStorage'
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django_notify.context_processors.notifications',
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+)
+NOTIFICATIONS_STORAGE = 'session.SessionStorage'
 
 ROOT_URLCONF = 'urls'
 

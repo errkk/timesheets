@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>{{ title }}</h1>
+	<p>If you delete a task, it will delete all the time tracked for it as well</p>
+	{% if objects %}
+	<table class="table table-bordered table-striped">
+	  <tbody>
+	    {% for i in objects %}
+			<tr>
+				<td>{{ i }}</td>
+				<td><a href="{% url edit_task i.id %}"><i class="icon icon-edit"></i> Edit</a></td>
+				<td width="10"><a href="{% url delete_task i.id %}"><i class="icon icon-remove"></i></a></td>
+			</tr>
+			{% endfor %}
+	  </tbody>
+	</table>
+
+
+	{% endif %}
+{% endblock %}

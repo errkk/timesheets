@@ -1,0 +1,11 @@
+{% extends "formpage.html" %}
+
+{% block description %}
+<p>Choose the Official name of the project that this task is for, if it's not there, you get to create one!</p>
+{% endblock %}
+
+
+{% block actions %}
+	{{ block.super }}
+		<button name="makeonefromthis" class="btn">Make a task from this</a>
+{% endblock %}

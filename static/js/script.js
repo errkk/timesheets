@@ -57,11 +57,13 @@
 
 	function handleFiles(files){
 		var file = files[0],
-		label = document.getElementById("droplabel");
+		label = document.getElementById("droplabel"),
+		original_message = label.innerHTML;
 
 		if( 'text/xml' !== file.type ){
 			label.innerHTML = 'Please drag the XML file from Grindstone';
-			$target.removeClass('over').removeClass('dropped');
+			$target.removeClass().addClass('error');
+			resetBG();
 			return;
 		}else{
 			label.innerHTML = "Processing " + file.name;	
@@ -81,18 +83,34 @@
 			  	var data = JSON.parse(res); 
 			  	$target.removeClass('loading');
 
-			  	var $list = $('#list').html('');
-			  	$(data).each(function(i,item){
-						var $li = $('<li>');
-						$list.append( $li.html( item['name'] + ' ' + item['total'] ) ); 
-			  	});
-			  	label.innerHTML = "Your Tasks";
+			  	if( 'ok' === data.status ){
+			  		var $list = $('#list').html('');
+				  	$(data.data).each(function(i,item){
+							var $li = $('<li>');
+							$list.append( $li.html( item['name'] + ' ' + item['total'] ) ); 
+				  	});
+				  	label.innerHTML = "Your Tasks";
+			  	}else if( 'uptodate' === data.status ){
+			  		label.innerHTML = "Already got this :-)";
+			  	}
+			  	$target.removeClass().addClass('dropped');
+
+			  	resetBG();
 
 			  },
 			  error: function(data){
-			  	console.log('error');
+			  	$target.removeClass().addClass('error');
+			  	resetBG();
 			  }
 			});
+		}
+
+		function resetBG(){
+			window.setTimeout(function(){ 
+				$target.removeClass(); 
+				label.innerHTML = original_message;
+			}, 3000 );
+
 		}
 
 		// begin the read operation

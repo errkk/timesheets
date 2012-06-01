@@ -1,20 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>Grindstone</h1>
-	<div class="hero-unit" id="dropbox">
+	<div id="dropbox">
     <h2 id="droplabel">Draggy Droppy</h2>
-    <ul id="list">
-    </ul>
+    <ul id="list"></ul>
    </div>
+{% endblock %}
 
-  <div class="row-fluid">
-    
-    <div class="span4">
-      <h2>Heading</h2>
-      <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-      <p><a class="btn" href="#">View details &raquo;</a></p>
-    </div><!--/span-->
-  </div><!--/row-->
+{% block sidebar %}
+  <h3>My Projects</h3>
+  <div class="well sidebar-nav">
+    <ul class="nav nav-list">
+      {% if mytasks %}
 
+      <li class="nav-header"><i class="icon-ok"></i> Tasks</li>
+        {% for t in mytasks %}
+          {% if t.task %}<li>{{ t.task }}</li>{% endif %}
+        {% endfor %}
+
+      <li class="nav-header"><i class="icon-warning-sign"></i> Un assigned tasks</li>
+        {% for t in mytasks %}
+          {% if not t.task %}<li><a href="{% url assign_alias t.id %}">{{ t.string }}</a></li>{% endif %}
+        {% endfor %}
+      {% else %}
+      <li>You dont have any yet</li>
+      {% endif %}
+    </ul>
+  </div><!--/.well -->
+{% endblock %}
+
+{% block spotlights %}
+<div class="span4">
+  <h2>Recent Imports</h2>
+  {% if imports %}
+    {% for i in imports %}
+      <li>{{ i.date }}</li>
+    {% endfor %}
+  {% endif %}
+</div>
 {% endblock %}

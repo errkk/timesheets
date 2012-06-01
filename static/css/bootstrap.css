@@ -7,12 +7,19 @@
   -o-transition:      all 0.4s ease-in-out;
   -ms-transition:     all 0.4s ease-in-out;
   transition:         all 0.4s ease-in-out;
-  box-shadow:none;
+  box-shadow:none; border-radius:10px;
+  background:#eee;
+  border:1px solid #ccc; padding:50px; font-size:1.5em; margin:38px 0 20px 0;
 }
 
-#dropbox.over{background:#333; color:#fff;}
-#dropbox.dropped{box-shadow:inset 0 0 10px #ccc;}
-#dropbox.loading{background:#eee;}
+#dropbox.over{background:rgb(40, 40, 40); color:#fff;}
+#dropbox.dropped{background:rgb(223, 240, 216); border-color:rgb(214, 233, 198);}
+#dropbox.error{background:rgb(242, 222, 222); border-color:rgb(238, 211, 215);}
+#dropbox.loading{}
+
+.sidebar h3{margin-bottom:0.5em;}
+
+.table{margin-top:20px;}
 
 
 

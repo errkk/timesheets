@@ -4,13 +4,13 @@ from datetime import timedelta, datetime
 import iso8601
 import sys
 
-def get_tasks( xml, weeks = 1 ):
+def get_tasks( xml, delta_period ):
 	soup = BeautifulSoup( xml )
 
 	tasks = []
 	
 	now_limit = datetime.now()
-	start_limit = now_limit - timedelta(weeks=weeks)
+	start_limit = now_limit - delta_period
 
 
 	# Loop thru all tasks
