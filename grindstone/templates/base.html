@@ -51,11 +51,12 @@
           </div>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
+              {% load tags %}
+              <li class="{% active request home %}"><a href="/">Home</a></li>
               {% if perms.change_task %}
-              <li><a href="{% url list_tasks %}">Edit Tasks</a></li>
+              <li class="{% active request list_tasks %}"><a href="{% url list_tasks %}">Edit Tasks</a></li>
               {% endif %}
-              <li><a href="{% url all_tasks %}">Graph</a></li>
+              <li class="{% active request all_tasks %}"><a href="{% url all_tasks %}">Graph</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -63,13 +64,15 @@
     </div>
 
     <div class="container-fluid">
-    {% block notifications %}
-      {% if notifications %}
-        {% for message in notifications %}
-        <div data-alert="alert" class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}<span class="close">&times;</span></div>
-        {% endfor %}
-      {% endif %}
-    {% endblock %}
+      {% block subnav %}
+      {% endblock %}
+      {% block notifications %}
+        {% if notifications %}
+          {% for message in notifications %}
+          <div data-alert="alert" class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}<span class="close">&times;</span></div>
+          {% endfor %}
+        {% endif %}
+      {% endblock %}
       <div class="row-fluid">
         <div class="span3 sidebar">
           {% block sidebar %}

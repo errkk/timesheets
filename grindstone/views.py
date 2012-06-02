@@ -8,6 +8,7 @@ from forms import LoginForm, AliasForm, TaskForm
 from django.contrib.auth import authenticate, login, logout
 from models import ImportEvent, Interval, Task, TaskAlias
 import datetime
+from django.db.models import Count
 
 import simplejson
 import base64
@@ -202,15 +203,65 @@ def delete_task(request,id):
 
 @login_required
 def all_tasks(request):
-	tasks = Task.objects.all()
+	aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task'))
 
-	categories = simplejson.dumps( [ t.name for t in tasks ] )
-	values = simplejson.dumps( [ float(t.get_total_time().seconds / 60 ) for t in tasks ] )
+	# Blank stuff for containing output form the itterations
+	a = {}
+	categories = []
+	values = []
+	tasks = []
+
+
+	# Group TaskAlias instances in a list for each proper task, 
+	# task ID is used for the key to identify uniqueness
+	for i in aliases:
+		if i.task.pk in a:
+			a[i.task.pk].append(i)
+		else:
+			a[i.task.pk] = [i]
+
+	# Loop thru list of proper tasks, some will be lists of more than one total that need to be totaled
+	for i in a:
+		if len(a[i]) > 1:
+			# Make TD object for total time for all totals in this list
+			total = sum([sub.task.get_total_time() for sub in a[i]], datetime.timedelta(0))			
+			categories.append( a[i][0].task.name )
+			values.append( total.seconds / 60 )
+			tasks.append( {'name' : a[i][0].task.name, 'total' : total} )
+
+		else:
+			# Just one task alias for this proper task
+			ta = a[i][0]
+			total = ta.task.get_total_time()
+			categories.append( ta.task.name )
+			values.append( float( total.seconds / 60 ) )
+			tasks.append( {'name' : ta.task.name, 'total' : total} )
+
 
 	return render(request,'graph.html', { 
-		'title' : 'Edit Tasks', 
+		'title' : 'All projects', 
+		'tasks' : tasks,
+		'categories' : simplejson.dumps( categories ),
+		'values' : simplejson.dumps( values )
+		})
+
+@login_required
+def my_tasks(request):
+	# Get all aliases for this user that have a proper task assigned to them
+	aliases = TaskAlias.objects.filter( interval__importevent__user = request.user ).filter( task__isnull = False ).distinct()
+
+	# list of dictionaries containing task name and total time for template
+	# This format is so its the same as all_tasks
+	tasks = [ {'name':i.task.name, 'total':i.task.get_total_time()} for i in aliases ]
+
+	# List of Task names
+	categories = simplejson.dumps( [ i['name'] for i in tasks ] )
+	# List of values
+	values = simplejson.dumps( [ float(i['total'].seconds / 60 ) for i in tasks ] )
+
+	return render(request,'graph.html', { 
+		'title' : 'My projects', 
 		'tasks' : tasks,
 		'categories' : categories,
 		'values' : values
 		})
-

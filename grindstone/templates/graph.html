@@ -2,15 +2,26 @@
 
 
 {% block content %}
-<div class="chart" id="chart-canvas"></div>
+  <div class="chart" id="chart-canvas"></div>
 {% endblock %}
 
 {% block sidebar %}
+  <h3>{{ title }}</h3>
   {% if tasks %}
-    {% for t in tasks %}
-      <p><strong><span class="label label-info">{{ t }}</span></strong> {{ t.get_total_time }}</p>
-    {% endfor %}
+  <div class="well sidebar-nav">
+    <ul class="nav nav-list">
+      <li class="nav-header"><i class="icon-ok"></i> Tasks</li>
+      {% for t in tasks %}
+        <li><strong><span class="label label-info">{{ t.name }}</span></strong> {{ t.total }}</li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endif %}
+  <div class="toolbar btn-group">
+      {% load tags %}
+      <a class="btn {% active request all_tasks %}" href="{% url all_tasks %}">Everyone</a>
+      <a class="btn {% active request my_tasks %}" href="{% url my_tasks %}">Mine</a>
+  </div>
 {% endblock %}
 
 {% block chartcode %}
@@ -19,7 +30,9 @@
         chart1 = new Highcharts.Chart({
            chart: {
               renderTo: 'chart-canvas',
-              type: 'bar'
+              type: 'bar',
+              
+              plotShadow: false
            },
            title: {
               text: 'What we been doing?'
@@ -33,7 +46,6 @@
               }
            },
            series: [{
-              name: 'Jane',
               data: {{ values|safe }}
            }]
         });

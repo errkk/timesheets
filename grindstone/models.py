@@ -66,7 +66,7 @@ class ImportEvent(models.Model):
 	Records when and who made a certain import of XML data from Grindstone
 	'''
 	user = models.ForeignKey(User)
-	date = models.DateTimeField( auto_now_add = True, editable = False )
+	date = models.DateTimeField( auto_now_add = True, editable = True )
 
 	def __unicode__(self):
 		return '%s (%s)' % ( self.date, self.user )
