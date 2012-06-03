@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from models import ImportEvent, Interval, Task, TaskAlias
 import datetime
 from django.db.models import Count
+from helpers import str2dt
 
 import simplejson
 import base64
@@ -202,7 +203,16 @@ def delete_task(request,id):
 
 
 @login_required
-def all_tasks(request):
+def all_tasks(request,datefrom=None,dateto=None):
+
+	if datefrom and dateto:
+		try:	
+			format = '%Y-%m-%d'
+			datefrom, dateto = str2dt(datefrom), str2dt(dateto)
+		except ValueError:
+			dateto, datefrom = False, False
+
+
 	aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task'))
 
 	# Blank stuff for containing output form the itterations

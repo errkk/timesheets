@@ -1,8 +1,17 @@
+$(document).ready(function(){
+	$('.deletewarning').on('click', function(e){
+		var answer = confirm('Whoa steady on sonny! This will get totes deleted, you sure bruvs?');
+		if( answer ){
+			window.location.href = this.href;
+		}
+		e.preventDefault();
+	});
+});
 
-(function(){
 
 
 
+$(document).ready(function(){
 
 	var dropbox = document.getElementById("dropbox"),
 	$target	= $(dropbox),
@@ -122,6 +131,4 @@
 		
 	}
 
-
-
-}());
+});

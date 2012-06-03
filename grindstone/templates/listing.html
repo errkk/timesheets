@@ -9,8 +9,10 @@
 	    {% for i in objects %}
 			<tr>
 				<td>{{ i }}</td>
-				<td><a href="{% url edit_task i.id %}"><i class="icon icon-edit"></i> Edit</a></td>
-				<td width="10"><a href="{% url delete_task i.id %}"><i class="icon icon-remove"></i></a></td>
+				<td width="90">
+					<a class="btn btn-mini" href="{% url edit_task i.id %}"><i class="icon icon-edit"></i> Edit</a>
+					<a class="btn btn-mini btn-danger deletewarning" href="{% url delete_task i.id %}"><i class="icon icon-remove"></i></a>
+				</td>
 			</tr>
 			{% endfor %}
 	  </tbody>
