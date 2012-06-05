@@ -17,7 +17,7 @@ class NavSelectedNode(template.Node):
 
 	def render(self, context):
 		
-		if context['request'].path == reverse(self.name[1]):
+		if reverse(self.name[1]) in context['request'].path:
 			return 'active'
 		else:
 			return ''

@@ -1,4 +1,6 @@
 $(document).ready(function(){
+	// Delete warnong message
+
 	$('.deletewarning').on('click', function(e){
 		var answer = confirm('Whoa steady on sonny! This will get totes deleted, you sure bruvs?');
 		if( answer ){
@@ -6,6 +8,24 @@ $(document).ready(function(){
 		}
 		e.preventDefault();
 	});
+
+	// Date filters, UI box
+	$( "#date_filters input[type='date']" ).datepicker({
+		showButtonPanel: true,
+		dateFormat: 'yy-mm-dd'
+	});
+
+	// Redirect URL from form submission, so URL is pretty
+	$('#date_filters').on('submit',function(e){
+		var $form = $(this),
+		date_from = $form.find('#date_from').val(),
+		date_to = $form.find('#date_to').val();
+
+		window.location = base_url + date_from + "/" + date_to;
+
+		e.preventDefault();
+	});
+
 });
 
 

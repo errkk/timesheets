@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from forms import LoginForm, AliasForm, TaskForm
 from django.contrib.auth import authenticate, login, logout
 from models import ImportEvent, Interval, Task, TaskAlias
+from django.contrib.auth.models import User
 import datetime
 from django.db.models import Count
 from helpers import str2dt
@@ -62,9 +63,11 @@ def dump(request):
 			for t in tasks:
 				ivl = Interval()
 				# Find proper task name
-				ivl.get_or_create_alias( t['name'] )
+				ivl.get_or_create_alias( t['name'], imp.user )
 				ivl.duration = t['total']
 				ivl.importevent = imp
+				ivl.start = t['start']
+				ivl.end = t['end']
 				ivl.save()
 				print ivl
 		else:
@@ -205,15 +208,19 @@ def delete_task(request,id):
 @login_required
 def all_tasks(request,datefrom=None,dateto=None):
 
-	if datefrom and dateto:
+	# Try to get date info
+	if datefrom and dateto:		
 		try:	
-			format = '%Y-%m-%d'
-			datefrom, dateto = str2dt(datefrom), str2dt(dateto)
+			datefrom, dateto = str2dt(datefrom), str2dt(dateto)			
 		except ValueError:
-			dateto, datefrom = False, False
+			return HttpResponseRedirect( reverse('all_tasks') )
+		else:
+			# Filterr envents between date range, as no exception was caught converting DT
+			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).annotate(terms=Count('task'))
+	else:
+		aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task'))
 
-
-	aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task'))
+		
 
 	# Blank stuff for containing output form the itterations
 	a = {}
@@ -252,13 +259,28 @@ def all_tasks(request,datefrom=None,dateto=None):
 		'title' : 'All projects', 
 		'tasks' : tasks,
 		'categories' : simplejson.dumps( categories ),
-		'values' : simplejson.dumps( values )
+		'values' : simplejson.dumps( values ),
+		'date' : { 'from' : datefrom, 'to' : dateto },
+		'base_url' : reverse( all_tasks )
 		})
 
 @login_required
-def my_tasks(request):
-	# Get all aliases for this user that have a proper task assigned to them
-	aliases = TaskAlias.objects.filter( interval__importevent__user = request.user ).filter( task__isnull = False ).distinct()
+def my_tasks(request,datefrom=None,dateto=None):
+
+	# Try to get date info
+	if datefrom and dateto:		
+		try:	
+			datefrom, dateto = str2dt(datefrom), str2dt(dateto)		
+		except ValueError:
+			dateto, datefrom = False, False
+			# Show all events
+			return HttpResponseRedirect( reverse('my_tasks') )
+		else:
+			# Filterr envents between date range
+			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).distinct()			
+	else:
+		aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).distinct()
+
 
 	# list of dictionaries containing task name and total time for template
 	# This format is so its the same as all_tasks
@@ -273,5 +295,69 @@ def my_tasks(request):
 		'title' : 'My projects', 
 		'tasks' : tasks,
 		'categories' : categories,
-		'values' : values
+		'values' : values,
+		'date' : { 'from' : datefrom, 'to' : dateto },
+		'base_url' : reverse( my_tasks )
 		})
+
+@login_required
+def people_tasks(request,datefrom=None,dateto=None):
+
+	# Try to get date info
+	if datefrom and dateto:		
+		try:	
+			datefrom, dateto = str2dt(datefrom), str2dt(dateto)		
+		except ValueError:
+			dateto, datefrom = False, False
+			# Show all events
+			return HttpResponseRedirect( reverse('my_tasks') )
+		else:
+			all_tasks = Task.objects.filter( taskalias__interval__start__gte = datefrom, taskalias__interval__end__lte = dateto ).distinct()
+	else:
+		all_tasks = Task.objects.all().distinct()
+
+	# All users
+	users = User.objects.filter( importevent__isnull = False )
+	
+	# List of string task names (categories)
+	task_names = [ t.name for t in all_tasks ]
+
+	# list to append for each user a dict with their name and a list of all the total times for all tasks
+	data = []
+
+	# each user, all tasks
+	for u in users:
+		# List of time (totals) for this user for every task in all_tasks
+		series = []
+
+		for t in all_tasks:
+			# collect intervals for this user for this task
+			intervals = Interval.objects.filter( alias__task = t ).filter( importevent__user = u )
+			
+			# Date filter
+			if datefrom and dateto:
+				intervals = intervals.filter( importevent__user = u ).filter( start__gte = datefrom, end__lte = dateto )
+
+			if intervals:
+				# Sum intervals for this task, to create total time this user has spent on it
+				timedeltas = [ i.duration for i in intervals ]
+				total = sum( timedeltas, datetime.timedelta(0) )
+				total_mins = float( total.seconds / 60 )
+				series.append(total_mins)
+			else:
+				# No intervals recorded so send 0 to keep list lined up
+				series.append(0)
+
+		data.append( { 'name' : str(u), 'data' : series } )
+
+		
+	
+	return render(request,'graph_people.html', { 
+		'title' : 'Projects', 
+		'tasks' : all_tasks,
+		'series' : simplejson.dumps(data),
+		'categories' : simplejson.dumps(task_names),
+		'date' : { 'from' : datefrom, 'to' : dateto },
+		'base_url' : reverse( people_tasks )
+		})
+

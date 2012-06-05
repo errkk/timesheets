@@ -6,7 +6,15 @@
 {% endblock %}
 
 {% block sidebar %}
+  
   <h3>{{ title }}</h3>
+  <ul class="nav nav-tabs">
+      {% load tags %}
+      <li class="tab {% active request all_tasks %}"><a href="{% url all_tasks %}">Everyone</a></li>
+      <li class="tab {% active request my_tasks %}"><a href="{% url my_tasks %}">Mine</a></li>
+      <li class="tab {% active request people_tasks %}"><a href="{% url people_tasks %}">Breakdown</a></li>
+  </ul>
+  {% block tasks %}
   {% if tasks %}
   <div class="well sidebar-nav">
     <ul class="nav nav-list">
@@ -16,15 +24,25 @@
       {% endfor %}
     </ul>
   </div>
+  {% else %}
+  <p class="alert alert-box alert-warning"><i class="icon icon-warning-sign"></i> Could not find any tasks</p>
   {% endif %}
-  <div class="toolbar btn-group">
-      {% load tags %}
-      <a class="btn {% active request all_tasks %}" href="{% url all_tasks %}">Everyone</a>
-      <a class="btn {% active request my_tasks %}" href="{% url my_tasks %}">Mine</a>
+  {% endblock %}
+  
+  <h3>Filter Date</h3>
+  <div class="well">
+    <form id="date_filters">
+      <label for="date_from">From</label>
+      <input class="span15" type="date" id="date_from" name="date_from" value="{% if date.from %}{{ date.from|date:"Y-m-d" }}{% endif %}" />
+      <label for="date_to">To</label>
+      <input class="span15" type="date" id="date_to" name="date_to" value="{% if date.to %}{{ date.to|date:"Y-m-d" }}{% endif %}" />
+      <button class="btn btn-primary btn-small" id="btn_filter">Filter</button>
+    </form>
   </div>
 {% endblock %}
 
 {% block chartcode %}
+  var base_url = "{{ base_url }}";
   var chart1; // globally available
   $(document).ready(function() {
         chart1 = new Highcharts.Chart({

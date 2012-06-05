@@ -41,6 +41,7 @@ class TaskAlias(models.Model):
 	'''
 	task = models.ForeignKey(Task, null=True)
 	string = models.CharField(null=False, blank=False, max_length=254)
+	user = models.ForeignKey(User)
 
 	def __unicode__(self):
 		if self.task:
@@ -79,6 +80,9 @@ class Interval(models.Model):
 	alias = models.ForeignKey(TaskAlias)
 	importevent = models.ForeignKey(ImportEvent)
 	duration = IntervalField()
+	# Earliest and latest of the component times that this interval is the sum of
+	start = models.DateTimeField(null=False,blank=False)
+	end = models.DateTimeField(null=False,blank=False)
 
 	def __unicode__(self):
 		if self.alias.task:
@@ -88,9 +92,9 @@ class Interval(models.Model):
 
 		return '%s spend doing %s (%s)' % ( self.duration, name, self.importevent.user )
 
-	def get_or_create_alias(self, name):
+	def get_or_create_alias(self, name, user):
 		# Try to find alias
-		alias = TaskAlias.objects.filter(string=name)
+		alias = TaskAlias.objects.filter(string=name, user = user)
 
 		if alias and len(alias):
 			self.alias = alias[0]
@@ -98,6 +102,7 @@ class Interval(models.Model):
 			# New alias assigned to new task
 			alias = TaskAlias()
 			alias.string = name
+			alias.user = user
 			alias.save()
 			self.alias = alias
 
