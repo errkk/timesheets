@@ -317,7 +317,7 @@ def people_tasks(request,datefrom=None,dateto=None):
 		all_tasks = Task.objects.all().distinct()
 
 	# All users
-	users = User.objects.filter( importevent__isnull = False )
+	users = User.objects.filter( importevent__isnull = False ).distinct()
 	
 	# List of string task names (categories)
 	task_names = [ t.name for t in all_tasks ]
