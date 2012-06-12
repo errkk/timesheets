@@ -18,7 +18,7 @@ def str2dt(string,format=None):
 	return datetime.fromtimestamp(mktime(strptime( string, format )))
 
 
-def month_list( datefrom=None, dateto=None, length = 12):
+def month_list( datefrom=None, dateto=None, length = 11):
 	'''
 	Make a list of dates for the last 12 months for sending to a selectbox in the template
 	Pass datefrom and dateto to identify if its the current month and set selected to true
@@ -42,6 +42,6 @@ def month_list( datefrom=None, dateto=None, length = 12):
 		
 		return { 'from' : start, 'to' : end, 'text': start.strftime('%B %Y'), 'selected' : selected }
 
-	months = map( month_maker, xrange( 1, length ) )
+	months = map( month_maker, xrange( 0, length ) )
 
 	return months
