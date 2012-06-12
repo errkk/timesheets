@@ -307,13 +307,17 @@ def my_tasks(request,datefrom=None,dateto=None):
 	# JSON List of values
 	values = simplejson.dumps( [ float(i['total'].seconds / 60 ) for i in tasks ] )
 
+	# Get list of last 12 months for the selectbox, see helpers.py
+	months = month_list( datefrom=datefrom, dateto=dateto )
+
 	return render(request,'graph.html', { 
 		'title' : 'My projects', 
 		'tasks' : tasks,
 		'categories' : categories,
 		'values' : values,
 		'date' : { 'from' : datefrom, 'to' : dateto },
-		'base_url' : reverse( my_tasks )
+		'base_url' : reverse( my_tasks ),
+		'months'	: months
 		})
 
 
@@ -369,6 +373,9 @@ def people_tasks(request,datefrom=None,dateto=None):
 
 		data.append( { 'name' : str(u), 'data' : series } )
 
+	# Get list of last 12 months for the selectbox, see helpers.py
+	months = month_list( datefrom=datefrom, dateto=dateto )
+
 		
 	
 	return render(request,'graph_people.html', { 
@@ -377,6 +384,7 @@ def people_tasks(request,datefrom=None,dateto=None):
 		'series' : simplejson.dumps(data),
 		'categories' : simplejson.dumps(task_names),
 		'date' : { 'from' : datefrom, 'to' : dateto },
-		'base_url' : reverse( people_tasks )
+		'base_url' : reverse( people_tasks ),
+		'months' : months
 		})
 
