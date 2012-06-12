@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from forms import LoginForm, AliasForm, TaskForm
 from django.contrib.auth import authenticate, login, logout
-from models import ImportEvent, Interval, Task, TaskAlias
+from models import ImportEvent, Interval, Task, TaskAlias, get_or_create_alias
 from django.contrib.auth.models import User
 import datetime
 from django.db.models import Count
@@ -54,33 +54,41 @@ def dump(request):
 		# Get tasks out of the XML	
 		tasks = process_xml.get_tasks( xml, delta_period )
 
-		# Check there is anything new to import
 		if len(tasks) > 0:
+			# Create import event
 			imp = ImportEvent()
 			imp.user = request.user
 			imp.save()
 
 			for t in tasks:
-				ivl = Interval()
-				# Find proper task name
-				ivl.get_or_create_alias( t['name'], imp.user )
-				ivl.duration = t['total']
-				ivl.importevent = imp
-				ivl.start = t['start']
-				ivl.end = t['end']
-				ivl.save()
-				print ivl
-		else:
-			data = simplejson.dumps( {'status':'uptodate'} )
-			return HttpResponse( data )
+				# Find or create a TaskAlias for this task
+				alias = get_or_create_alias( t['name'], request.user )
 
-		data = map( lambda i: {'name':i['name'],'total':str(i['total'])}, tasks )
+				# If there are time intervals recored, make an instance of Interval for each
+				if len(t['intervals']) > 0:
+					# There is time recorded for this task
+
+					# Create interval record for all time intervals
+					for i in t['intervals']:
+
+						ivl = Interval()
+						ivl.alias = alias
+						ivl.importevent = imp
+						ivl.duration = i['timedelta']
+						ivl.start = i['start']
+						ivl.end = i['end']
+						ivl.save()
+
+				else:
+					# No tasks delivered, probably already done for this time period
+					json = simplejson.dumps( {'status':'uptodate'} )
+					return HttpResponse( json )
+
+			# Return names of tasks that were imported
+			data = [ {'name':i['name']} for i in tasks ]
+			json = simplejson.dumps( {'status':'ok', 'data' : data } )
+			return HttpResponse( json )
 	
-		data = simplejson.dumps( {'status':'ok', 'data' : data } )
-
-		return HttpResponse( data )
-	else:
-		return HttpResponse( 'false' )
 
 @csrf_protect
 def loginpage(request):

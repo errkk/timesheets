@@ -94,23 +94,34 @@ class Interval(models.Model):
 
 		return '%s spend doing %s (%s)' % ( self.duration, name, self.importevent.user )
 
-	def get_or_create_alias(self, name, user):
-		# Try to find alias
+	# def get_or_create_alias(self, name, user):
+	# 	# Try to find alias
+	# 	alias = TaskAlias.objects.filter(string=name, user = user)
+
+	# 	if alias and len(alias):
+	# 		self.alias = alias[0]
+	# 	else:
+	# 		# New alias assigned to new task
+	# 		alias = TaskAlias()
+	# 		alias.string = name
+	# 		alias.user = user
+	# 		alias.save()
+	# 		self.alias = alias
+
+
+			
+def get_or_create_alias(name, user):
 		alias = TaskAlias.objects.filter(string=name, user = user)
 
 		if alias and len(alias):
-			self.alias = alias[0]
+			return alias[0]
 		else:
 			# New alias assigned to new task
 			alias = TaskAlias()
 			alias.string = name
 			alias.user = user
 			alias.save()
-			self.alias = alias
-
-
-			
-
+			return alias
 
 
 
