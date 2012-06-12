@@ -7,8 +7,8 @@ urlpatterns = patterns('',
 	url(r'^task/(?P<id>\d+)$', edit_task, name = 'edit_task' ),
 	url(r'^task/rm/(?P<id>\d+)$', delete_task, name = 'delete_task' ),
 	
-	url(r'^tasks/all/(?P<datefrom>\d{4}-\d{2}-\d{1,2})/(?P<dateto>\d{4}-\d{2}-\d{1,2})$', all_tasks, name = 'all_tasks' ),
-	url(r'^tasks/all/$', all_tasks, name = 'all_tasks' ),
+	url(r'^tasks/(?P<datefrom>\d{4}-\d{2}-\d{1,2})/(?P<dateto>\d{4}-\d{2}-\d{1,2})$', all_tasks, name = 'all_tasks' ),
+	url(r'^tasks/$', all_tasks, name = 'all_tasks' ),
 
 	url(r'^tasks/my/(?P<datefrom>\d{4}-\d{2}-\d{1,2})/(?P<dateto>\d{4}-\d{2}-\d{1,2})$', my_tasks, name = 'my_tasks' ),
 	url(r'^tasks/my/$', my_tasks, name = 'my_tasks' ),

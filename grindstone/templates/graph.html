@@ -12,9 +12,9 @@
 			{% load tags %}
 			
 			{% if datefrom and dateto  %}
-			<li class="tab {% active request all_tasks %}"><a href="{% url all_tasks datefrom dateto %}">Everyone</a></li>
-			<li class="tab {% active request my_tasks %}"><a href="{% url my_tasks datefrom dateto %}">Mine</a></li>
-			<li class="tab {% active request people_tasks %}"><a href="{% url people_tasks datefrom dateto %}">Breakdown</a></li>
+			<li class="tab {% activeparent request all_tasks %}"><a href="{% url all_tasks datefrom dateto %}">Everyone</a></li>
+			<li class="tab {% activeparent request my_tasks %}"><a href="{% url my_tasks datefrom dateto %}">Mine</a></li>
+			<li class="tab {% activeparent request people_tasks %}"><a href="{% url people_tasks datefrom dateto %}">Breakdown</a></li>
 			{% else %}
 			<li class="tab {% active request all_tasks %}"><a href="{% url all_tasks %}">Everyone</a></li>
 			<li class="tab {% active request my_tasks %}"><a href="{% url my_tasks %}">Mine</a></li>
