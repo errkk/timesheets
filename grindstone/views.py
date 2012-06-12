@@ -221,58 +221,39 @@ def all_tasks(request,datefrom=None,dateto=None):
 		try:	
 			datefrom, dateto = str2dt(datefrom), str2dt(dateto)			
 		except ValueError:
+			# Show all
 			return HttpResponseRedirect( reverse('all_tasks') )
-		else:
-			# Filterr envents between date range, as no exception was caught converting DT
-			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).annotate(terms=Count('task')).order_by('task')
-	else:
-		aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task')).order_by('task')
 
-		
+	# Get all proper task objects
+	mtasks = Task.objects.all()
 
-
-	# Blank stuff for containing output form the itterations
-	a = {}
-	categories = []
-	values = []
+	# Empty list for each task to send to the template
 	tasks = []
 
+	for t in mtasks:
+		# Get all intervals for this task
+		intervals = Interval.objects.filter( alias__task = t )
 
-	# Group TaskAlias instances in a list for each proper task, 
-	# task ID is used for the key to identify uniqueness
-	for i in aliases:
-		if i.task.pk in a:
-			a[i.task.pk].append(i)
-		else:
-			a[i.task.pk] = [i]
+		# Filter by date if datetimes are present
+		if datefrom and dateto:
+			intervals = intervals.filter( start__gte = datefrom, end__lte = dateto )
 
+		# Sum timedeltas for all the intervals for this task in this time period
+		total = sum_tds( [ i.duration for i in intervals ] )
 
+		# Append this task, and total time to the list for the template
+		tasks.append({ 'name':t.name, 'total':total })
 
-	# Loop thru list of proper tasks, some will be lists of more than one total that need to be totaled
-	for i in a:
-		if len(a[i]) > 1:
-
-			# Make TD object for total time for all totals in this list
-			total = sum_tds( [sub.task.get_total_time() for sub in a[i]] )
-			# get task name from first item, they should all relate to the same task, so the name will be the same
-			categories.append( a[i][0].task.name )
-			values.append( total.seconds / 60 )
-			tasks.append( {'name' : a[i][0].task.name, 'total' : total} )
-
-		else:
-			# Just one task alias for this proper task
-			ta = a[i][0]
-			total = ta.task.get_total_time()
-			categories.append( ta.task.name )
-			values.append( float( total.seconds / 60 ) )
-			tasks.append( {'name' : ta.task.name, 'total' : total} )
-
+	# JSON List of Task names
+	categories = simplejson.dumps( [ i['name'] for i in tasks ] )
+	# JSON List of values
+	values = simplejson.dumps( [ float(i['total'].seconds / 60 ) for i in tasks ] )
 
 	return render(request,'graph.html', { 
 		'title' : 'All projects', 
 		'tasks' : tasks,
-		'categories' : simplejson.dumps( categories ),
-		'values' : simplejson.dumps( values ),
+		'categories' : categories,
+		'values' : values,
 		'date' : { 'from' : datefrom, 'to' : dateto },
 		'base_url' : reverse( all_tasks )
 		})
@@ -293,7 +274,7 @@ def my_tasks(request,datefrom=None,dateto=None):
 			datefrom, dateto = str2dt(datefrom), str2dt(dateto)		
 		except ValueError:
 			dateto, datefrom = False, False
-			# Show all events
+			# Show all
 			return HttpResponseRedirect( reverse('my_tasks') )
 	
 	# Empty list for each task to send to the template
@@ -346,36 +327,35 @@ def people_tasks(request,datefrom=None,dateto=None):
 			# Show all events
 			return HttpResponseRedirect( reverse('my_tasks') )
 		else:
-			all_tasks = Task.objects.filter( taskalias__interval__start__gte = datefrom, taskalias__interval__end__lte = dateto ).distinct()
+			mtasks = Task.objects.filter( taskalias__interval__start__gte = datefrom, taskalias__interval__end__lte = dateto ).distinct()
 	else:
-		all_tasks = Task.objects.all().distinct()
+		mtasks = Task.objects.all().distinct()
 
 	# All users
 	users = User.objects.filter( importevent__isnull = False ).distinct()
 	
 	# List of string task names (categories)
-	task_names = [ t.name for t in all_tasks ]
+	task_names = [ t.name for t in mtasks ]
 
 	# list to append for each user a dict with their name and a list of all the total times for all tasks
 	data = []
 
 	# each user, all tasks
 	for u in users:
-		# List of time (totals) for this user for every task in all_tasks
+		# List of time (totals) for this user for every task in mtasks
 		series = []
 
-		for t in all_tasks:
+		for t in mtasks:
 			# collect intervals for this user for this task
 			intervals = Interval.objects.filter( alias__task = t ).filter( importevent__user = u )
 			
 			# Date filter
 			if datefrom and dateto:
-				intervals = intervals.filter( importevent__user = u ).filter( start__gte = datefrom, end__lte = dateto )
+				intervals = intervals.filter( start__gte = datefrom, end__lte = dateto )
 
 			if intervals:
 				# Sum intervals for this task, to create total time this user has spent on it
-				timedeltas = [ i.duration for i in intervals ]
-				total = sum( timedeltas, datetime.timedelta(0) )
+				total = sum_tds( [ i.duration for i in intervals ] )
 				total_mins = float( total.seconds / 60 )
 				series.append(total_mins)
 			else:
@@ -388,7 +368,7 @@ def people_tasks(request,datefrom=None,dateto=None):
 	
 	return render(request,'graph_people.html', { 
 		'title' : 'Projects', 
-		'tasks' : all_tasks,
+		'tasks' : mtasks,
 		'series' : simplejson.dumps(data),
 		'categories' : simplejson.dumps(task_names),
 		'date' : { 'from' : datefrom, 'to' : dateto },
