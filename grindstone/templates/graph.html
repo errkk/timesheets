@@ -7,12 +7,19 @@
 
 {% block sidebar %}
 	
-	<h3>{{ title }}</h3>
+	<h3>{{ title }} {% if datefrom and dateto  %}<a href="{{ base_url }}"><small class="label label-info">Filtered</small></a>{% endif %}</h3>
 	<ul class="nav nav-tabs">
 			{% load tags %}
+			
+			{% if datefrom and dateto  %}
+			<li class="tab {% active request all_tasks %}"><a href="{% url all_tasks datefrom dateto %}">Everyone</a></li>
+			<li class="tab {% active request my_tasks %}"><a href="{% url my_tasks datefrom dateto %}">Mine</a></li>
+			<li class="tab {% active request people_tasks %}"><a href="{% url people_tasks datefrom dateto %}">Breakdown</a></li>
+			{% else %}
 			<li class="tab {% active request all_tasks %}"><a href="{% url all_tasks %}">Everyone</a></li>
 			<li class="tab {% active request my_tasks %}"><a href="{% url my_tasks %}">Mine</a></li>
 			<li class="tab {% active request people_tasks %}"><a href="{% url people_tasks %}">Breakdown</a></li>
+			{% endif %}
 	</ul>
 	{% block tasks %}
 	{% if tasks %}

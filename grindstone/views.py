@@ -260,7 +260,9 @@ def all_tasks(request,datefrom=None,dateto=None):
 		'values' : values,
 		'date' : { 'from' : datefrom, 'to' : dateto },
 		'base_url' : reverse( all_tasks ),
-		'months' : months
+		'months' : months,
+		'datefrom' : datefrom.strftime('%Y-%m-%d') if datefrom else False,
+		'dateto' : dateto.strftime('%Y-%m-%d') if dateto else False
 		})
 
 
@@ -317,7 +319,9 @@ def my_tasks(request,datefrom=None,dateto=None):
 		'values' : values,
 		'date' : { 'from' : datefrom, 'to' : dateto },
 		'base_url' : reverse( my_tasks ),
-		'months'	: months
+		'months'	: months,
+		'datefrom' : datefrom.strftime('%Y-%m-%d') if datefrom else False,
+		'dateto' : dateto.strftime('%Y-%m-%d') if dateto else False
 		})
 
 
@@ -385,6 +389,8 @@ def people_tasks(request,datefrom=None,dateto=None):
 		'categories' : simplejson.dumps(task_names),
 		'date' : { 'from' : datefrom, 'to' : dateto },
 		'base_url' : reverse( people_tasks ),
-		'months' : months
+		'months' : months,
+		'datefrom' : datefrom.strftime('%Y-%m-%d') if datefrom else False,
+		'dateto' : dateto.strftime('%Y-%m-%d') if dateto else False
 		})
 

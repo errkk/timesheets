@@ -9,6 +9,7 @@ urlpatterns = patterns('',
 	
 	url(r'^tasks/all/(?P<datefrom>\d{4}-\d{2}-\d{1,2})/(?P<dateto>\d{4}-\d{2}-\d{1,2})$', all_tasks, name = 'all_tasks' ),
 	url(r'^tasks/all/$', all_tasks, name = 'all_tasks' ),
+
 	url(r'^tasks/my/(?P<datefrom>\d{4}-\d{2}-\d{1,2})/(?P<dateto>\d{4}-\d{2}-\d{1,2})$', my_tasks, name = 'my_tasks' ),
 	url(r'^tasks/my/$', my_tasks, name = 'my_tasks' ),
 
