@@ -10,7 +10,7 @@ from models import ImportEvent, Interval, Task, TaskAlias
 from django.contrib.auth.models import User
 import datetime
 from django.db.models import Count
-from helpers import str2dt
+from helpers import str2dt, sum_tds
 
 import simplejson
 import base64
@@ -148,13 +148,13 @@ def assign_alias(request,id):
 				alias.task = task
 				alias.save()
 				request.notifications.success('Proper task created from alias')
-				return HttpResponseRedirect(reverse('assign_alias', args=[id]))
+				return HttpResponseRedirect(reverse('home'))
 
 		# Save alias against chosen task
 		elif form.is_valid():
 			obj = form.save()
 			request.notifications.success('Thanks, now %s is known as %s' % ( alias.string, obj.task ) )
-			return HttpResponseRedirect(reverse('assign_alias', args=[id]))
+			return HttpResponseRedirect(reverse('home'))
 		else:
 			pass
 
@@ -169,7 +169,7 @@ def assign_alias(request,id):
 	})
 
 @login_required
-@permission_required('change_task')
+@permission_required('grindstone.change_task')
 def edit_task(request,id):
 	task = get_object_or_404( Task, pk=id )
 
@@ -189,13 +189,13 @@ def edit_task(request,id):
 
 
 @login_required
-@permission_required('change_task')
+@permission_required('grindstone.change_task')
 def list_tasks(request):
 	tasks = Task.objects.all()
 	return render(request,'listing.html', { 'title' : 'Edit Tasks', 'objects' : tasks })
 
 @login_required
-@permission_required('delete_task')
+@permission_required('grindstone.delete_task')
 def delete_task(request,id):
 	task = get_object_or_404( Task, pk=id )
 	
@@ -216,11 +216,12 @@ def all_tasks(request,datefrom=None,dateto=None):
 			return HttpResponseRedirect( reverse('all_tasks') )
 		else:
 			# Filterr envents between date range, as no exception was caught converting DT
-			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).annotate(terms=Count('task'))
+			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).annotate(terms=Count('task')).order_by('task')
 	else:
-		aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task'))
+		aliases = TaskAlias.objects.filter( task__isnull = False ).annotate(terms=Count('task')).order_by('task')
 
 		
+
 
 	# Blank stuff for containing output form the itterations
 	a = {}
@@ -237,11 +238,15 @@ def all_tasks(request,datefrom=None,dateto=None):
 		else:
 			a[i.task.pk] = [i]
 
+
+
 	# Loop thru list of proper tasks, some will be lists of more than one total that need to be totaled
 	for i in a:
 		if len(a[i]) > 1:
+
 			# Make TD object for total time for all totals in this list
-			total = sum([sub.task.get_total_time() for sub in a[i]], datetime.timedelta(0))			
+			total = sum_tds( [sub.task.get_total_time() for sub in a[i]] )
+			# get task name from first item, they should all relate to the same task, so the name will be the same
 			categories.append( a[i][0].task.name )
 			values.append( total.seconds / 60 )
 			tasks.append( {'name' : a[i][0].task.name, 'total' : total} )
@@ -277,14 +282,14 @@ def my_tasks(request,datefrom=None,dateto=None):
 			return HttpResponseRedirect( reverse('my_tasks') )
 		else:
 			# Filterr envents between date range
-			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).distinct()			
+			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).distinct().order_by('task')
 	else:
-		aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).distinct()
+		aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).distinct().order_by('task')
 
 
 	# list of dictionaries containing task name and total time for template
 	# This format is so its the same as all_tasks
-	tasks = [ {'name':i.task.name, 'total':i.task.get_total_time()} for i in aliases ]
+	tasks = [ {'name':i.task.name, 'total':i.task.get_total_time(user=request.user)} for i in aliases ]
 
 	# List of Task names
 	categories = simplejson.dumps( [ i['name'] for i in tasks ] )

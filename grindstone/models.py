@@ -15,9 +15,12 @@ class Task(models.Model):
 	def __unicode__(self):
 		return self.name
 
-	def get_aliases(self):
+	def get_aliases(self,user=None):
 		'Get all aliases for this task'
-		return TaskAlias.objects.filter( task = self )
+		aliases = TaskAlias.objects.filter( task = self )
+		if user:
+			aliases.filter( user = user )
+		return aliases
 
 	def get_all_intervals(self):
 		aliases = self.get_aliases()
@@ -25,11 +28,11 @@ class Task(models.Model):
 			for a in aliases:
 				print a.get_intervals()
 
-	def get_total_time(self):
+	def get_total_time(self, user=None):
 		'''
 		Sum the total timedelta attached to all aliases of this task
 		'''
-		timedeltas = [ a.get_total_time() for a in self.get_aliases() ]
+		timedeltas = [ a.get_total_time() for a in self.get_aliases(user=user) ]
 		return sum_tds( timedeltas )
 
 
@@ -56,7 +59,6 @@ class TaskAlias(models.Model):
 	def get_total_time(self):
 		intervals = self.get_intervals()
 		timedeltas = [ i.duration for i in intervals ]
-
 		total = sum_tds( timedeltas )
 
 		return total

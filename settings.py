@@ -128,8 +128,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'grindstone',
-    # 'bootstrap',
-    # 'storages',
 )
 
 

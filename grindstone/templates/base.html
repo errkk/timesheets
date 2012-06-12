@@ -55,7 +55,7 @@
             <ul class="nav">
               {% load tags %}
               <li class="{% active request home %}"><a href="/">Home</a></li>
-              {% if perms.change_task %}
+              {% if perms.grindstone.change_task %}
               <li class="{% active request list_tasks %}"><a href="{% url list_tasks %}">Edit Tasks</a></li>
               {% endif %}
               <li class="{% active request all_tasks %}"><a href="{% url all_tasks %}">Graph</a></li>
