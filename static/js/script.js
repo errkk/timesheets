@@ -9,13 +9,24 @@ $(document).ready(function(){
 		e.preventDefault();
 	});
 
-	// Date filters, UI box
-	$( "#date_filters input[type='date']" ).datepicker({
-		showButtonPanel: true,
-		dateFormat: 'yy-mm-dd'
-	});
+	// Put the JQ datepicker on the date field if the field type is not supported
+	(function(){
+		var i = document.createElement('input');
+		i.setAttribute('type','date');
 
-	// Redirect URL from form submission, so URL is pretty
+		if( 'date' !== i.type ){
+			// Date filters, UI box
+			$( "#date_filters input[type='date']" ).datepicker({
+				showButtonPanel: true,
+				dateFormat: 'yy-mm-dd'
+			});
+		}
+	}());
+
+
+	
+
+	// Redirect URL from form submission, so URL is pretty for custom date filter inputs
 	$('#date_filters').on('submit',function(e){
 		var $form = $(this),
 		date_from = $form.find('#date_from').val(),
@@ -25,6 +36,20 @@ $(document).ready(function(){
 
 		e.preventDefault();
 	});
+
+
+	// Redirect URL from form submission, so URL is pretty for month selectbox
+	$('#months').on('submit',function(e){
+		var $form = $(this),
+		month = $form.find('#month').val();
+
+		window.location = base_url + month;
+
+		e.preventDefault();
+	});
+
+
+
 
 });
 
