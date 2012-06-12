@@ -1,43 +1,50 @@
 {% extends "graph.html" %}
 
 {% block tasks %}
-  {% if tasks %}
-  <div class="well sidebar-nav">
-    <ul class="nav nav-list">
-      <li class="nav-header"><i class="icon-ok"></i> Tasks</li>
-      {% for t in tasks %}
-        <li><strong><span class="label label-info">{{ t.name }}</span></strong> {{ t.get_total_time }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% else %}
-  <p class="alert alert-box alert-warning"><i class="icon icon-warning-sign"></i> Could not find any tasks</p>
-  {% endif %}
+	{% if tasks %}
+	<div class="well sidebar-nav">
+		<ul class="nav nav-list">
+			<li class="nav-header"><i class="icon-ok"></i> Tasks</li>
+			{% for t in tasks %}
+				<li><strong><span class="label label-info">{{ t.name }}</span></strong> {{ t.get_total_time }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% else %}
+	<p class="alert alert-box alert-warning"><i class="icon icon-warning-sign"></i> Could not find any tasks</p>
+	{% endif %}
 {% endblock %}
 
 {% block chartcode %}
-  var base_url = "{{ base_url }}";
-  var chart1; // globally available
-  $(document).ready(function() {
-        chart1 = new Highcharts.Chart({
-           chart: {
-              renderTo: 'chart-canvas',
-              type: 'bar',
-              
-              plotShadow: false
-           },
-           title: {
-              text: 'What we been doing?'
-           },
-           xAxis: {
-              categories: {{ categories|safe }}
-           },
-           yAxis: {
-              title: {
-                 text: 'Minutes'
-              }
-           },
-           series: {{ series|safe }}
-        });
-     });
+	var base_url = "{{ base_url }}";
+	var chart1; // globally available
+	$(document).ready(function() {
+		chart1 = new Highcharts.Chart({
+			chart: {
+				renderTo: 'chart-canvas',
+				type: 'bar',
+
+				plotShadow: false
+			},
+			plotOptions: {
+				series: {
+					groupPadding: 0.05,
+					shadow: false,
+					borderRadius: 3
+				}
+			},
+			title: {
+				text: 'What we been doing?'
+			},
+			xAxis: {
+				categories: {{ categories|safe }}
+			},
+			yAxis: {
+				title: {
+					text: 'Minutes'
+				}
+			},
+			series: {{ series|safe }}
+		});
+	});
 {% endblock %}
