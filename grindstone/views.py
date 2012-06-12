@@ -10,7 +10,7 @@ from models import ImportEvent, Interval, Task, TaskAlias, get_or_create_alias
 from django.contrib.auth.models import User
 import datetime
 from django.db.models import Count
-from helpers import str2dt, sum_tds
+from helpers import str2dt, sum_tds, month_list
 
 import simplejson
 import base64
@@ -249,13 +249,18 @@ def all_tasks(request,datefrom=None,dateto=None):
 	# JSON List of values
 	values = simplejson.dumps( [ float(i['total'].seconds / 60 ) for i in tasks ] )
 
+	# Get list of last 12 months for the selectbox, see helpers.py
+	months = month_list( datefrom=datefrom, dateto=dateto )
+
+
 	return render(request,'graph.html', { 
 		'title' : 'All projects', 
 		'tasks' : tasks,
 		'categories' : categories,
 		'values' : values,
 		'date' : { 'from' : datefrom, 'to' : dateto },
-		'base_url' : reverse( all_tasks )
+		'base_url' : reverse( all_tasks ),
+		'months' : months
 		})
 
 

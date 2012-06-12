@@ -39,6 +39,24 @@
       <button class="btn btn-primary btn-small" id="btn_filter">Filter</button>
     </form>
   </div>
+
+  {% if months %}
+  <div class="well">
+    <form id="months" class="form-vertical">
+      <div class="control-group">
+        <label class="control-label" for="month">Select a month</label>
+        <div class="controls">
+          <select name="month" id="month">
+            {% for m in months %}
+              <option value="{{ m.from|date:"Y-m-d" }}/{{ m.to|date:"Y-m-d" }}" {% if m.selected %}selected="selected"{% endif %}>{{ m.text }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-small" id="btn_filter">Filter</button>
+    </form>
+  </div>
+  {% endif %}
 {% endblock %}
 
 {% block chartcode %}
