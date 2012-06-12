@@ -277,10 +277,17 @@ def all_tasks(request,datefrom=None,dateto=None):
 		'base_url' : reverse( all_tasks )
 		})
 
+
+
+
+
 @login_required
 def my_tasks(request,datefrom=None,dateto=None):
 
-	# Try to get date info
+	# Get all tasks for this user
+	aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).distinct()
+
+	# Filter aliases if there is some datetimes
 	if datefrom and dateto:		
 		try:	
 			datefrom, dateto = str2dt(datefrom), str2dt(dateto)		
@@ -288,20 +295,30 @@ def my_tasks(request,datefrom=None,dateto=None):
 			dateto, datefrom = False, False
 			# Show all events
 			return HttpResponseRedirect( reverse('my_tasks') )
-		else:
-			# Filterr envents between date range
-			aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).filter( interval__start__gte = datefrom, interval__end__lte = dateto ).distinct().order_by('task')
-	else:
-		aliases = TaskAlias.objects.filter( task__isnull = False ).filter( interval__importevent__user = request.user ).distinct().order_by('task')
+	
+	# Empty list for each task to send to the template
+	tasks = []
 
+	# Loop thru aliases for this user, 
+	# and find via all aliases for that (proper) task, find total time (for this user)
+	for a in aliases:
 
-	# list of dictionaries containing task name and total time for template
-	# This format is so its the same as all_tasks
-	tasks = [ {'name':i.task.name, 'total':i.task.get_total_time(user=request.user)} for i in aliases ]
+		# Get all intervals for this task for this user
+		intervals = Interval.objects.filter( alias__task = a.task ).filter( importevent__user = request.user )
 
-	# List of Task names
+		# Filter by date if datetimes are present
+		if datefrom and dateto:
+			intervals = intervals.filter( start__gte = datefrom, end__lte = dateto )
+
+		# Sum timedeltas for all the intervals for this task in this time period
+		total = sum_tds( [ i.duration for i in intervals ] )
+
+		# Append this task, and total time to the list for the template
+		tasks.append({ 'name':a.task.name, 'total':total })
+
+	# JSON List of Task names
 	categories = simplejson.dumps( [ i['name'] for i in tasks ] )
-	# List of values
+	# JSON List of values
 	values = simplejson.dumps( [ float(i['total'].seconds / 60 ) for i in tasks ] )
 
 	return render(request,'graph.html', { 
@@ -312,6 +329,10 @@ def my_tasks(request,datefrom=None,dateto=None):
 		'date' : { 'from' : datefrom, 'to' : dateto },
 		'base_url' : reverse( my_tasks )
 		})
+
+
+
+
 
 @login_required
 def people_tasks(request,datefrom=None,dateto=None):

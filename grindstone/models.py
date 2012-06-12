@@ -22,12 +22,6 @@ class Task(models.Model):
 			aliases.filter( user = user )
 		return aliases
 
-	def get_all_intervals(self):
-		aliases = self.get_aliases()
-		if aliases:
-			for a in aliases:
-				print a.get_intervals()
-
 	def get_total_time(self, user=None):
 		'''
 		Sum the total timedelta attached to all aliases of this task
@@ -82,7 +76,6 @@ class Interval(models.Model):
 	alias = models.ForeignKey(TaskAlias)
 	importevent = models.ForeignKey(ImportEvent)
 	duration = IntervalField()
-	# Earliest and latest of the component times that this interval is the sum of
 	start = models.DateTimeField(null=False,blank=False)
 	end = models.DateTimeField(null=False,blank=False)
 
@@ -94,19 +87,6 @@ class Interval(models.Model):
 
 		return '%s spend doing %s (%s)' % ( self.duration, name, self.importevent.user )
 
-	# def get_or_create_alias(self, name, user):
-	# 	# Try to find alias
-	# 	alias = TaskAlias.objects.filter(string=name, user = user)
-
-	# 	if alias and len(alias):
-	# 		self.alias = alias[0]
-	# 	else:
-	# 		# New alias assigned to new task
-	# 		alias = TaskAlias()
-	# 		alias.string = name
-	# 		alias.user = user
-	# 		alias.save()
-	# 		self.alias = alias
 
 
 			
