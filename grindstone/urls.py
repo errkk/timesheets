@@ -4,8 +4,8 @@ from views import dump, assign_alias, edit_task, list_tasks, delete_task, all_ta
 urlpatterns = patterns('',
 	url(r'^dump', dump, name = 'dump' ),
 	url(r'^alias/(?P<id>\d+)$', assign_alias, name = 'assign_alias' ),
-	url(r'^task/(?P<id>\d+)$', edit_task, name = 'edit_task' ),
-	url(r'^task/rm/(?P<id>\d+)$', delete_task, name = 'delete_task' ),
+	url(r'^edittasks/(?P<id>\d+)$', edit_task, name = 'edit_task' ),
+	url(r'^edittasks/rm/(?P<id>\d+)$', delete_task, name = 'delete_task' ),
 	
 	url(r'^tasks/$', all_tasks_redirect, name = 'all_tasks_redirect' ),
 	url(r'^tasks/all/(?P<datefrom>\d{4}-\d{2}-\d{1,2})/(?P<dateto>\d{4}-\d{2}-\d{1,2})$', all_tasks, name = 'all_tasks' ),

@@ -29,6 +29,11 @@ div li{line-height:1.8em;}
 
 #chart-canvas{background:#eee; width:100%; height:700px;}
 
+.filter{vertical-align:middle;}
+.filter small{color:#fff; vertical-align:middle; display: inline-block; padding:0 0 2px 4px;}
+#sidebar a:hover{text-decoration:none;}
+#sidebar a:hover .filter{background:#999;}
+
 
 
 /*!

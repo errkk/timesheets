@@ -7,7 +7,7 @@
 
 {% block sidebar %}
 	
-	<h3>{{ title }} {% if datefrom and dateto  %}<a href="{{ base_url }}"><small class="label label-info">Filtered</small></a>{% endif %}</h3>
+	<h3>{{ title }} {% if datefrom and dateto  %}<a href="{{ base_url }}"><span class="label label-info filter">Filtered <small>&times;</small></span></a>{% endif %}</h3>
 	<ul class="nav nav-tabs">
 			{% load tags %}
 			

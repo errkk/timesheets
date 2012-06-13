@@ -45,7 +45,7 @@
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#">Profile</a></li>
+              <li><a href="{% url my_tasks %}">My Tasks</a></li>
               <li class="divider"></li>
               <li><a href="{% url logout %}">Sign Out</a></li>
             </ul>
@@ -55,7 +55,7 @@
               {% load tags %}
               <li class="{% active request home %}"><a href="/">Home</a></li>
               {% if perms.grindstone.change_task %}
-              <li class="{% active request list_tasks %}"><a href="{% url list_tasks %}">Edit Tasks</a></li>
+              <li class="{% activeparent request list_tasks %}"><a href="{% url list_tasks %}">Edit Tasks</a></li>
               {% endif %}
               <li class="{% activeparent request all_tasks_redirect %}"><a href="{% url all_tasks_redirect %}">Graph</a></li>
             </ul>
@@ -75,7 +75,7 @@
         {% endif %}
       {% endblock %}
       <div class="row-fluid">
-        <div class="span3 sidebar">
+        <div class="span3 sidebar" id="sidebar">
           {% block sidebar %}
 
           {% endblock %}
