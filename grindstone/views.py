@@ -214,6 +214,10 @@ def delete_task(request,id):
 
 
 @login_required
+def all_tasks_redirect(request):
+	return HttpResponseRedirect( reverse('all_tasks') )
+
+@login_required
 def all_tasks(request,datefrom=None,dateto=None):
 
 	# Try to get date info

@@ -35,7 +35,7 @@ def month_list( datefrom=None, dateto=None, length = 11):
 		# Calculate datetimes for the start and end of the month
 		start = start_of_this_month + relativedelta( months = -m )
 		end = start + relativedelta( months = 1, days = -1 )
-		nominal_td = timedelta(1)
+		nominal_td = timedelta(1) # 1 day
 		# Check the start and end date in the URI are the last and first days of this month
 		# Do that by comparing datetime objects, and the resulting timedeta that is smallest is the closest, smaller than datetime.timedelta(1)
 		selected = datefrom and dateto and abs(datefrom - start) < nominal_td and abs(dateto - end) < nominal_td
