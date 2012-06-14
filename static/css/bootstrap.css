@@ -48,6 +48,8 @@ div li{line-height:1.8em;}
 table#dnd tbody tr:hover td:first-child{background-image:url(/static/img/drag.png); background-repeat: no-repeat; background-position: 100% 50%;}
 
 
+.graphtt{padding:0 5px;}
+
 
 /*!
  * Bootstrap v2.0.3

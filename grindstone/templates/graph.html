@@ -84,6 +84,16 @@
 					borderRadius: 3
 				}
 			},
+			tooltip:{
+				useHTML: true,
+				formatter : function(){
+
+					var minutes = this.y,
+					t = moment.duration(parseInt(this.y), 'minutes');
+
+					return '<div class="graphtt"><h3>' + this.x + '</h3> <p>' + t.humanize() + '</p></div>';
+				}
+			},
 			title: {
 				text: 'What we been doing?'
 			},
