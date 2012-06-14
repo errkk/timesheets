@@ -36,6 +36,16 @@ div li{line-height:1.8em;}
 
 
 
+#dnd tbody tr.over td{box-shadow:inset 2px 0 3px #999; font-weight:bold;}
+#dnd tbody tr{
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: move;
+}
+
+
 /*!
  * Bootstrap v2.0.3
  *

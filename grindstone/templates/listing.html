@@ -4,10 +4,10 @@
 	<h1>{{ title }}</h1>
 	<p>If you delete a task, it will delete all the time tracked for it as well</p>
 	{% if objects %}
-	<table class="table table-bordered table-striped">
+	<table class="table table-bordered table-striped" id="dnd">
 	  <tbody>
 	    {% for i in objects %}
-			<tr>
+			<tr data-id="{{ i.pk }}" draggable="true">
 				<td>{{ i }}</td>
 				<td width="90">
 					<a class="btn btn-mini" href="{% url edit_task i.id %}"><i class="icon icon-edit"></i> Edit</a>

@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, include, url
 from views import dump, assign_alias, edit_task, list_tasks, delete_task, all_tasks, my_tasks, people_tasks, all_tasks_redirect
+from ajax import ajax_consolodate_tasks
+
 
 urlpatterns = patterns('',
 	url(r'^dump', dump, name = 'dump' ),
@@ -18,4 +20,6 @@ urlpatterns = patterns('',
 	url(r'^tasks/people/$', people_tasks, name = 'people_tasks' ),
 	
 	url(r'^edittasks/$', list_tasks, name = 'list_tasks' ),
+
+	url(r'^ajax/$', ajax_consolodate_tasks, name = 'ajax_consolodate_tasks' ),
 )
