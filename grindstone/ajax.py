@@ -1,10 +1,13 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required
 from models import Task, TaskAlias
 import simplejson
 
 @csrf_exempt
+@login_required
+@permission_required('grindstone.consolodate_task')
 def ajax_consolodate_tasks(request):
 	'''
 	Get all aliases for the task (subject) and set their task_id to target

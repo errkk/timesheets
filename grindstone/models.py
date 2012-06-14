@@ -29,6 +29,11 @@ class Task(models.Model):
 		timedeltas = [ a.get_total_time() for a in self.get_aliases(user=user) ]
 		return sum_tds( timedeltas )
 
+	class Meta:
+		permissions = (
+			('consolodate_task', 'Can drag and drop tasks to consolodate them'),
+		)
+
 
 
 

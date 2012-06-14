@@ -4,14 +4,16 @@
 	<h1>{{ title }}</h1>
 	<p>If you delete a task, it will delete all the time tracked for it as well</p>
 	{% if objects %}
-	<table class="table table-bordered table-striped" id="dnd">
+	<table class="table table-bordered table-striped" {% if perms.grindstone.consolodate_task %}id="dnd"{% endif %}>
 	  <tbody>
 	    {% for i in objects %}
 			<tr data-id="{{ i.pk }}" draggable="true">
 				<td>{{ i }}</td>
 				<td width="90">
 					<a class="btn btn-mini" href="{% url edit_task i.id %}"><i class="icon icon-edit"></i> Edit</a>
+					{% if perms.grindstone.delete_task %}
 					<a class="btn btn-mini btn-danger deletewarning" href="{% url delete_task i.id %}"><i class="icon icon-remove"></i></a>
+					{% endif %}
 				</td>
 			</tr>
 			{% endfor %}
@@ -19,5 +21,12 @@
 	</table>
 
 
+	{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+	{% if perms.grindstone.consolodate_task %}
+	<script type="text/javascript">var ajax_url = '{{ ajax_url }}';</script>
+	<script src="/static/js/consolodate_task.js"></script>
 	{% endif %}
 {% endblock %}
