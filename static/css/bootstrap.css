@@ -45,6 +45,9 @@ div li{line-height:1.8em;}
   cursor: move;
 }
 
+table#dnd tbody tr:hover td:first-child{background-image:url(/static/img/drag.png); background-repeat: no-repeat; background-position: 100% 50%;}
+
+
 
 /*!
  * Bootstrap v2.0.3
