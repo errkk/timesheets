@@ -94,7 +94,7 @@ $(document).ready(function(){
 		function consolodate_tasks( subject, target, success_callback ){
 			$.ajax({
 			  type: 'PUT',
-			  url: '/gs/ajax/',
+			  url: ajax_url,
 			  data: JSON.stringify({ 'subject' : subject, 'target' : target }),
 			  success: function(res){
 			  	var data = JSON.parse(res); 

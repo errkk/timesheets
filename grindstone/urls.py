@@ -21,5 +21,5 @@ urlpatterns = patterns('',
 	
 	url(r'^edittasks/$', list_tasks, name = 'list_tasks' ),
 
-	url(r'^ajax/$', ajax_consolodate_tasks, name = 'ajax_consolodate_tasks' ),
+	url(r'^ajax/consolodate_tasks/$', ajax_consolodate_tasks, name = 'ajax_consolodate_tasks' ),
 )

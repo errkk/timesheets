@@ -200,7 +200,7 @@ def edit_task(request,id):
 @permission_required('grindstone.change_task')
 def list_tasks(request):
 	tasks = Task.objects.all()
-	return render(request,'listing.html', { 'title' : 'Edit Tasks', 'objects' : tasks })
+	return render(request,'listing.html', { 'title' : 'Edit Tasks', 'objects' : tasks, 'ajax_url' : reverse( 'ajax_consolodate_tasks' ) })
 
 @login_required
 @permission_required('grindstone.delete_task')
