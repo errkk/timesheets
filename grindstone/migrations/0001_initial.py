@@ -8,6 +8,14 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'Category'
+        db.create_table('grindstone_category', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=254)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
+        ))
+        db.send_create_signal('grindstone', ['Category'])
+
         # Adding model 'Task'
         db.create_table('grindstone_task', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -15,6 +23,14 @@ class Migration(SchemaMigration):
             ('description', self.gf('django.db.models.fields.CharField')(max_length=500, null=True, blank=True)),
         ))
         db.send_create_signal('grindstone', ['Task'])
+
+        # Adding M2M table for field categories on 'Task'
+        db.create_table('grindstone_task_categories', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('task', models.ForeignKey(orm['grindstone.task'], null=False)),
+            ('category', models.ForeignKey(orm['grindstone.category'], null=False))
+        ))
+        db.create_unique('grindstone_task_categories', ['task_id', 'category_id'])
 
         # Adding model 'TaskAlias'
         db.create_table('grindstone_taskalias', (
@@ -46,8 +62,14 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Deleting model 'Category'
+        db.delete_table('grindstone_category')
+
         # Deleting model 'Task'
         db.delete_table('grindstone_task')
+
+        # Removing M2M table for field categories on 'Task'
+        db.delete_table('grindstone_task_categories')
 
         # Deleting model 'TaskAlias'
         db.delete_table('grindstone_taskalias')
@@ -96,6 +118,12 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'grindstone.category': {
+            'Meta': {'object_name': 'Category'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '254'})
+        },
         'grindstone.importevent': {
             'Meta': {'object_name': 'ImportEvent'},
             'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
@@ -113,6 +141,7 @@ class Migration(SchemaMigration):
         },
         'grindstone.task': {
             'Meta': {'object_name': 'Task'},
+            'categories': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['grindstone.Category']", 'symmetrical': 'False'}),
             'description': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '254'})
