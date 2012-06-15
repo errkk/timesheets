@@ -103,8 +103,10 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django_notify.context_processors.notifications',
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
+    'grindstone.processors.nag',
 )
 NOTIFICATIONS_STORAGE = 'session.SessionStorage'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 ROOT_URLCONF = 'urls'
 

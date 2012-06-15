@@ -23,7 +23,6 @@ def home(request):
 	
 	# Get all the tasks that this person has done
 	aliases = TaskAlias.objects.filter( interval__importevent__user = request.user ).distinct()
-
 	return render( request,'index.html', { 'mytasks' : aliases, 'imports' : imports } )
 
 @login_required
