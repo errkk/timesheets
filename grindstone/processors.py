@@ -7,7 +7,7 @@ from django.contrib import messages
 
 def nag(request):
 	today = datetime.today()
-	td_week = timedelta(minutes=1)
+	td_week = timedelta(weeks=1)
 	
 	recent_imports = ImportEvent.objects.filter( date__lte=today, date__gte=today-td_week, user=request.user )
 	
