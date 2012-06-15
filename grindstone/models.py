@@ -13,7 +13,8 @@ class Task(models.Model):
 	'''
 	name = models.CharField(null=False, blank=False, max_length=254)
 	description = models.CharField(null=True, blank=True, max_length=500)
-	
+	categories = models.ManyToManyField(Category)
+
 	def __unicode__(self):
 		return self.name
 
