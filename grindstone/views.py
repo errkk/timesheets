@@ -137,6 +137,7 @@ def assign_alias(request,id):
 
 	if 'POST' == request.method:
 		form = AliasForm( request.POST, instance = alias )
+		form.fields['task'].queryset = Task.objects.all().order_by('name')
 
 		# Make a task from this alias
 		if 'makeonefromthis' in form.data:
@@ -167,6 +168,7 @@ def assign_alias(request,id):
 
 	else:
 		form = AliasForm(instance = alias)
+		form.fields['task'].queryset = Task.objects.all().order_by('name')
 
 
 	return render(request,'assign_alias.html', { 

@@ -10,6 +10,10 @@ class AliasForm(forms.ModelForm):
 		model = TaskAlias
 		fields = ['task']
 
+		widgets = {
+			'task': forms.Select(attrs={'class': 'select2'}),
+		}
+
 class TaskForm(forms.ModelForm):
 	class Meta:
 		model = Task

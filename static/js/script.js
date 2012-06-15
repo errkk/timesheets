@@ -1,6 +1,9 @@
 $(document).ready(function(){
-	// Delete warnong message
 
+	// Select 2
+	$('select.select2').select2();
+
+	// Delete warnong message
 	$('.deletewarning').on('click', function(e){
 		var answer = confirm('Whoa steady on sonny! This will get totes deleted, you sure bruvs?');
 		if( answer ){
