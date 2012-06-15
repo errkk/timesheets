@@ -9,7 +9,7 @@ class Category(models.Model):
 	'''
 	Group Tasks into categories for sorting and filtering
 	'''
-	name = models.CharField(null=False, blank=False, max_length=254)
+	name = models.CharField(null=True, blank=True, max_length=254)
 	description = models.CharField(null=True, blank=True, max_length=500)
 
 	def __unicode__(self):
@@ -21,7 +21,7 @@ class Task(models.Model):
 	'''
 	name = models.CharField(null=False, blank=False, max_length=254)
 	description = models.CharField(null=True, blank=True, max_length=500)
-	categories = models.ManyToManyField(Category)
+	categories = models.ManyToManyField(Category, null=True, blank=True)
 
 	def __unicode__(self):
 		return self.name
