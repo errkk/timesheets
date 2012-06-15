@@ -1,4 +1,4 @@
-
+@import url(http://fonts.googleapis.com/css?family=Alfa+Slab+One);
 
 
 #dropbox{
@@ -50,6 +50,13 @@ table#dnd tbody tr:hover td:first-child{background-image:url(/static/img/drag.pn
 
 .graphtt{padding:0 5px;}
 
+body{padding-top: 80px; padding-bottom: 80px;}
+
+.sidebar-nav {padding: 9px 0;}
+
+.navbar-inner{padding:15px 0 5px;}
+
+.container-fluid a.brand{color:#fff; font-family: 'Alfa Slab One', cursive; }
 
 /*!
  * Bootstrap v2.0.3

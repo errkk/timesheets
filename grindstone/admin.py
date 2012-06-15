@@ -1,4 +1,4 @@
-from models import ImportEvent, Interval, Task, TaskAlias
+from models import ImportEvent, Interval, Task, TaskAlias, Category
 from django.contrib import admin
 
 class ImportEventAdmin(admin.ModelAdmin):
@@ -19,7 +19,11 @@ class TaskAliasAdmin(admin.ModelAdmin):
 	list_display = ('string','task','user')
 	list_filter = ('user','task')
 
+class CategoryAdmin(admin.ModelAdmin):
+	list_filter = ('task',)
+
 admin.site.register(ImportEvent, ImportEventAdmin)
 admin.site.register(Interval,IntervalAdmin)
 admin.site.register(Task)
 admin.site.register(TaskAlias,TaskAliasAdmin)
+admin.site.register(Category,CategoryAdmin)
