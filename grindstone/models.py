@@ -5,15 +5,7 @@ from interval.fields import IntervalField
 from helpers import sum_tds
 
 
-class Category(models.Model):
-	'''
-	Group Tasks into categories for sorting and filtering
-	'''
-	name = models.CharField(null=False, blank=False, max_length=254)
-	description = models.CharField(null=True, blank=True, max_length=500)
 
-	def __unicode__(self):
-		return self.name
 
 class Task(models.Model):
 	'''
@@ -21,7 +13,6 @@ class Task(models.Model):
 	'''
 	name = models.CharField(null=False, blank=False, max_length=254)
 	description = models.CharField(null=True, blank=True, max_length=500)
-	categories = models.ManyToManyField(Category)
 	
 	def __unicode__(self):
 		return self.name
